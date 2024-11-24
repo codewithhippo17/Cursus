@@ -6,79 +6,97 @@
 /*   By: ehamza <ehamza@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 10:00:52 by ehamza            #+#    #+#             */
-/*   Updated: 2024/11/23 00:55:43 by ehamza           ###   ########.fr       */
+/*   Updated: 2024/11/24 01:13:01 by ehamza           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_last(char *word)
+
+void	ft_save_buffer(char **reminder, char *buffer)
 {
-	char	*last;
-	int		i;
+	// char	*buffer;
+	size_t	len;
+	size_t	i;
 
 	i = 0;
-	last = ft_strdup(word);
-	if (!last)
-		return (NULL);
-	while (last[i] != 10)
+	if (buffer)
 	{
-		i++;
+		// buffer++;
+		len = ft_strlen(buffer);
+		*reminder = malloc(len + 1);
+		if (len != 0)
+		{
+			while (buffer[i])
+			{
+				reminder[0][i] = buffer[i];
+				i++;
+			}
+			reminder[i] = '\0';
+		}
 	}
-	last[i + 1] = '\0';
-	return (last);
 }
 
-char	*reload(int fd, char *word, char *s_buffer)
+char	*reload(int fd, char *word)
 {
 	char	*line;
-	// printf("%s", s_buffer);
-	line = ft_strjoin(word, read_buffer(fd, s_buffer));
+
+	line = ft_strjoin(word, read_buffer(fd));
 	if (!line)
 		return (NULL);
-		// printf("%s", s_buffer);
 	return (line);
 }
 
-char	*read_buffer(int fd, char *s_buffer)
+char	*read_buffer(int fd)
 {
-	char	*word;
-	int		size;
+	static char *reminder;
+	char		*word;
+	char		*buffer;
+	int			size;
 
-	if (s_buffer)
+	if (reminder)
 	{
-		printf("hjksmv,l;.ds");
-		return (reload(fd, s_buffer, s_buffer));
+		word = ft_strdup(reminder);
+		free(reminder);
+		reminder = NULL;
+		buffer = NULL;
 	}
-	word = malloc(BUFFER_SIZE + 1);
-	if (!word)
-		return (NULL);
-	size = read(fd, word, BUFFER_SIZE);
-	if (size == -1 || size == 0)
-		return (NULL);
-	s_buffer  = ft_memchr(word, size);
-	if (!s_buffer)
-		return (word[size] = '\0', reload(fd, word, s_buffer));
-	s_buffer++;
-	return (ft_last(word));
+	else
+	{
+		word = malloc(BUFFER_SIZE + 1);
+		if (!word)
+			return (NULL);
+		size = read(fd, word, BUFFER_SIZE);
+		if (size == -1)
+			return (NULL);
+		buffer = ft_memchr(word, size);
+		if (size == 0)
+			return (ft_strdup(""));
+	}
+	if (buffer)
+		return (word[size] = '\0', ft_save_buffer(&reminder, buffer + 1), ft_last(word));
+	return (word[size] = '\0', reload(fd, word));
 }
 
 char	*get_next_line(int fd)
 {
-	static char *s_buffer;
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	line = read_buffer(fd, s_buffer);
-	// printf("%s", s_buffer);
+	line = read_buffer(fd);
+	if (line[0] == 0)
+		return (NULL);
 	return (line);
 }
 
 int main()
 {
 	int fd = open("ttt", O_RDWR, 0777);
-	printf("%s",get_next_line(fd));
-	printf("%s",get_next_line(fd));
-		printf("%s",get_next_line(fd));
+	char *line;
+	while (line = get_next_line(fd))
+	{
+		printf("%s", line);
+	}
+	printf("%s", line);
 }

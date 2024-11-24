@@ -6,7 +6,7 @@
 /*   By: ehamza <ehamza@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 10:00:28 by ehamza            #+#    #+#             */
-/*   Updated: 2024/11/23 00:51:45 by ehamza           ###   ########.fr       */
+/*   Updated: 2024/11/24 00:26:35 by ehamza           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,20 @@ char	*ft_strdup(char *s)
 	}
 	dup[i] = 0;
 	return (dup);
+}
+char	*ft_last(char *word)
+{
+	char	*last;
+	int		i;
+
+	i = 0;
+	last = ft_strdup(word);
+	if (!last)
+		return (NULL);
+	while (last[i] != 10 && last[i])
+	{
+		i++;
+	}
+	last[i + 1] = '\0';
+	return (last);
 }
