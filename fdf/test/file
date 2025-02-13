@@ -1,0 +1,24 @@
+
+./fdf 10-2.fdf
+./fdf 10-70.fdf
+./fdf 20-60.fdf
+./fdf 42.fdf
+./fdf 50-4.fdf
+./fdf 100-6.fdf
+./fdf basictest.fdf
+./fdf elem-col.fdf
+./fdf elem-fract.fdf
+./fdf elem.fdf
+./fdf elem2.fdf
+./fdf julia.fdf
+./fdf map.txt
+./fdf mars.fdf
+./fdf pentenegpos.fdf
+./fdf plat.fdf
+./fdf pnp_flat.fdf
+./fdf pylone.fdf
+./fdf pyra.fdf
+./fdf pyramide.fdf
+./fdf t1.fdf
+./fdf t2.fdf
+./fdf test.fdf
