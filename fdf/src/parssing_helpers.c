@@ -24,41 +24,17 @@ int ft_strlenz(char *str)
 	return (i);
 }
 
-void ft_free_point(t_map s_map)
-{
-	int i;
-
-	i = 0;
-	while (s_map.point[i])
-	{
-		free(s_map.point[i]);
-		i++;
-	}
-	free(s_map.point);
-}
-
-void ft_free_array(char **array)
-{
-	int i;
-
-	i = 0;
-	while (array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-}
 
 t_point    read_point(char *point, int x, int y)
 {
-	t_point	s_point;
-
+    t_point	s_point;
+    
 	if (!point)
-		return (t_point){0, 0, 0, 0xFFFFFF};
+    return (t_point){0, 0, 0, 0xFFFFFF};
 	s_point.x = x;
 	s_point.y = y;
 	s_point.z = ft_atoi(point);
 	s_point.color = get_color(ft_strchr(point, ','));
 	return (s_point);
 }
+    

@@ -57,6 +57,8 @@ int is_hex(char *big)
 	int i;
 
 	i = 3;
+	if (!big)
+		return (0);
 	if (ft_strlen(big) > 9)
 		return (0);
 	while (big[i])
@@ -79,6 +81,8 @@ int v_point(char *big)
 {
 	char *little;
 
+	if (!big || !*big)
+        return (0);
 	little = ft_strnstr(big, ",0x", ft_strlen(big));
 	if (!little && is_dec(big, ft_strlen(big)))
 	{
@@ -90,3 +94,4 @@ int v_point(char *big)
 	}
 	return(0);
 }
+

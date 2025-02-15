@@ -1,0 +1,24 @@
+
+ valgrind --leak-check=full ./fdf 10-2.fdf
+ valgrind --leak-check=full ./fdf 10-70.fdf
+ valgrind --leak-check=full ./fdf 20-60.fdf
+ valgrind --leak-check=full ./fdf 42.fdf
+ valgrind --leak-check=full ./fdf 50-4.fdf
+ valgrind --leak-check=full ./fdf 100-6.fdf
+ valgrind --leak-check=full ./fdf basictest.fdf
+ valgrind --leak-check=full ./fdf elem-col.fdf
+ valgrind --leak-check=full ./fdf elem-fract.fdf
+ valgrind --leak-check=full ./fdf elem.fdf
+ valgrind --leak-check=full ./fdf elem2.fdf
+ valgrind --leak-check=full ./fdf julia.fdf
+ valgrind --leak-check=full ./fdf map.txt
+ valgrind --leak-check=full ./fdf mars.fdf
+ valgrind --leak-check=full ./fdf pentenegpos.fdf
+ valgrind --leak-check=full ./fdf plat.fdf
+ valgrind --leak-check=full ./fdf pnp_flat.fdf
+ valgrind --leak-check=full ./fdf pylone.fdf
+ valgrind --leak-check=full ./fdf pyra.fdf
+ valgrind --leak-check=full ./fdf pyramide.fdf
+ valgrind --leak-check=full ./fdf t1.fdf
+ valgrind --leak-check=full ./fdf t2.fdf
+ valgrind --leak-check=full ./fdf test.fdf

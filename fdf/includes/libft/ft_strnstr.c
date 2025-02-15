@@ -41,5 +41,5 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 // {
 // 	char big[] = "1,0xfff00f";
 // 	char *little = ",0x";
-// 	printf("%s \n", ft_strnstr(big, little, 3));
+// 	printf("%s \n", ft_strnstr(big, little, 16));
 // }

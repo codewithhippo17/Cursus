@@ -1,47 +1,80 @@
 # Project: fdf
 NAME = fdf
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CURRENT_DIR := $(shell pwd)/maps/
+CFLAGS = -Wall -Wextra -Werror -DCURRENT_DIR=\"$(CURRENT_DIR)\"
+I := 3
 
 # fdf sources
-SRCS = src/parssing.c src/utils.c src/helpers.c
+SRCS =	fdf.c src/fdf_utils.c src/fdf_helpers.c\
+		src/parssing.c src/parssing_utils.c src/parssing_helpers.c\
+		src/kill.c
+	
 OBJS = $(SRCS:.c=.o)
 
 
 # includes && libs
-INCLUDES = -I/usr/include/minilibx-linux
-LIBS = -L./includes/ft_printf -L./includes/libft -L./includes/gnl -L/usr/include/minilibx-linux -lftprintf -lgnl -lft -lmlx
+INCLUDES =	-I/usr/include/minilibx-linux\
+			-I./includes\
+			-I/usr/include/X11
+
+MLX = -lmlx -lX11 -lXext
+
+LIBS =	-L/usr/include/minilibx-linux\
+		-L./includes/libft\
+		-L./includes/gnl\
+		-L./includes/ft_printf\
+		-lmlx -lX11 -lXext -lft -lgnl -lftprintf 
 
 all: gnl ft_printf libft $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(OBJS) $(INCLUDES) $(LIBS) -o $(NAME) -g
+	@$(CC) $(OBJS) $(INCLUDES) $(LIBS) -o $(NAME)
+	@$(eval I=$(shell echo $$(($(I)+1))))
+	@echo "\e[32m[$(I)] [...Fdf...] Successfully compiled.\e[0m"
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $^ $(INCLUDES) -o $@ -g
+	@$(CC) $(CFLAGS) -c $^ $(INCLUDES) -o $@
+	@$(eval I=$(shell echo $$(($(I)+1))))
+	@echo "[$(I)][ $^ ]   Bulding object files..."
 
+gdb: CFLAGS += -g
+gdb: re
+	@gdb -tui --args ./fdf map.fdf
+valgrind: re
+	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./fdf map.fdf
 gnl:
-	make -C includes/gnl
+	@make -C includes/gnl > /dev/null 2>&1
+	@echo "[1][...gnl...] Successfully compiled."
 
 ft_printf:
-	make -C includes/ft_printf
+	@make -C includes/ft_printf > /dev/null 2>&1
+	@echo "[2][ft_Printf] Successfully compiled."
 
 libft:
-	make -C includes/libft
+	@make -C includes/libft > /dev/null 2>&1
+	@echo "[3][..Libft..] Successfully compiled."
 
 clean:
-	make -C includes/gnl clean
-	make -C includes/ft_printf clean
-	make -C includes/libft clean
-	rm -f $(OBJS)
+	@make -C includes/gnl clean > /dev/null 2>&1
+	@echo "[1][...gnl...] Cleaned."
+	@make -C includes/ft_printf clean > /dev/null 2>&1
+	@echo "[2][ft_Printf] Cleaned."
+	@make -C includes/libft clean > /dev/null 2>&1
+	@echo "[3][..Libft..] Cleaned."
+	@rm -f $(OBJS)
+	@echo "[4][...Fdf...] Object files removed."
 
 
 fclean: clean
-	rm -f $(NAME)
-	make -C includes/ft_printf fclean
-	make -C includes/libft fclean
-	make -C includes/gnl fclean
+	@rm -f $(NAME)
+	@echo  "\e[33m[5][...Fdf...] Fdf shut down.\e[0m"
+	@echo ".................................." 
 
 re: fclean all
+
+c: re
+	@./fdf map.txt
+
 
 .PHONY: all clean fclean re ft_printf libft gnl
