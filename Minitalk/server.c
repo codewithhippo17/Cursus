@@ -3,78 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehamza <ehamza@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zasoulai <zasoulai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/18 23:29:42 by ehamza            #+#    #+#             */
-/*   Updated: 2025/01/18 23:58:40 by ehamza           ###   ########.fr       */
+/*   Created: 2025/03/07 15:18:31 by zasoulai          #+#    #+#             */
+/*   Updated: 2025/03/24 11:47:13 by zasoulai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-static char	*g_message = NULL;
-
-char	*ft_joinc2str(char *s1, char c)
+static void	signal_handler(int signum, siginfo_t *act, void *tmp)
 {
-	char	*join;
-	int		i;
-	int		j;
+	static int		byte;
+	static char		c;
+	static pid_t	pid;
 
-	i = 0;
-	j = 0;
-	if (!s1)
+	(void)tmp;
+	if (pid != act->si_pid)
 	{
-		s1 = ft_strdup("");
-		return (ft_joinc2str(s1, c));
+		byte = 7;
+		c = 0;
+		pid = act->si_pid;
 	}
-	join = malloc(ft_strlen(s1) + 2);
-	if (!join)
+	if (signum == SIGUSR2)
+		c |= 1 << byte;
+	byte--;
+	if (byte == -1)
 	{
-		free(s1);
-		return (NULL);
+		if (c == '\0')
+			c = '\n';
+		write(1, &c, 1);
+		byte = 7;
+		c = 0;
 	}
-	while (s1[j])
-		join[i++] = s1[j++];
-	join[i++] = c;
-	join[i] = '\0';
-	free(s1);
-	return (join);
-}
-
-void	sigusr1_handler(int sig)
-{
-	static int	nb = 0;
-	static int	bit = 0;
-
-	if (sig == SIGUSR1)
-		nb |= (0x01 << bit);
-	bit++;
-	if (bit == 8)
-	{
-		if (nb == '\0')
-		{
-			ft_printf("%s\n", g_message);
-			free(g_message);
-			g_message = NULL;
-		}
-		else
-			g_message = ft_joinc2str(g_message, (char)nb);
-		bit = 0;
-		nb = 0;
-	}
+	kill(pid, SIGUSR1);
 }
 
 int	main(void)
 {
-	int	pid;
+	struct sigaction	act;
 
-	pid = getpid();
-	ft_printf("PID: %d\n", pid);
-	signal(SIGUSR1, sigusr1_handler);
-	signal(SIGUSR2, sigusr1_handler);
+	act.sa_sigaction = signal_handler;
+	act.sa_flags = SA_SIGINFO;
+	if (sigemptyset(&act.sa_mask) == -1)
+		return (1);
+	if (sigaction(SIGUSR2, &act, NULL) == -1)
+		return (1);
+	if (sigaction(SIGUSR1, &act, NULL) == -1)
+		return (1);
+	ft_putstr("The server PID : ", 1);
+	ft_putnbr(getpid());
+	write(1, "\n", 1);
 	while (1)
-	{
 		pause();
-	}
 	return (0);
 }

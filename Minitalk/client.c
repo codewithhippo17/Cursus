@@ -3,49 +3,71 @@
 /*                                                        :::      ::::::::   */
 /*   client.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehamza <ehamza@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zasoulai <zasoulai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/18 23:35:59 by ehamza            #+#    #+#             */
-/*   Updated: 2025/01/23 12:05:55 by ehamza           ###   ########.fr       */
+/*   Created: 2025/03/11 15:25:11 by zasoulai          #+#    #+#             */
+/*   Updated: 2025/03/24 11:26:03 by zasoulai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	ft_send_bits(int pid, char i)
-{
-	int	bit;
+static int	g_flag;
 
-	bit = 0;
-	while (bit < 8)
+static void	send_byte(char c, pid_t pid)
+{
+	int	byte;
+	int	bit;
+	int	n;
+
+	byte = 7;
+	while (byte >= 0)
 	{
-		if ((i & (0x01 << bit)) != 0)
-			kill(pid, SIGUSR1);
+		bit = c >> byte & 1;
+		if (bit == 0)
+			n = kill(pid, SIGUSR1);
 		else
-			kill(pid, SIGUSR2);
-		usleep(400);
-		bit++;
+			n = kill(pid, SIGUSR2);
+		if (n == -1)
+		{
+			ft_putstr("PID is invalid\n", 2);
+			exit(1);
+		}
+		byte--;
+		while (g_flag == 0)
+			;
+		g_flag = 0;
 	}
 }
 
-int	main(int argc, char **argv)
+static void	signal_handler(int signum)
 {
-	char	*message;
-	int		pid;
-	int		i;
+	(void)signum;
+	g_flag = 1;
+}
 
-	i = 0;
-	if (argc == 3)
+int	main(int ac, char **av)
+{
+	int		i;
+	pid_t	pid;
+
+	if (ac != 3)
 	{
-		message = ft_strdup(argv[2]);
-		pid = ft_atoi(argv[1]);
-		while (message[i] != '\0')
-		{
-			ft_send_bits(pid, message[i]);
-			i++;
-		}
+		ft_putstr("Usage: ./client <PID> <STRING>\n", 2);
+		return (1);
 	}
-	ft_send_bits(pid, message[i]);
-	free(message);
+	g_flag = 0;
+	if (signal(SIGUSR1, signal_handler) == SIG_ERR)
+		return (1);
+	i = 0;
+	pid = ft_atoi(av[1]);
+	if (pid == -1 || pid == 0)
+		return (1);
+	while (av[2][i])
+	{
+		send_byte(av[2][i], pid);
+		i++;
+	}
+	send_byte('\0', pid);
 	return (0);
 }

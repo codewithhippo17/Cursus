@@ -1,38 +1,54 @@
+NAME_1 = server
+NAME_2 = client
+BONUS_NAME_1 = server_bonus
+BONUS_NAME_2 = client_bonus
+NAME = $(NAME_1) $(NAME_2)
+
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
-OTHER_PATHS = ft_printf/libftprintf.a libft/libft.a
 
+SRC = server.c \
+	helper.c
 
-all: ft_printf_makefile libft_makefile server client
+SRC_1 = client.c \
+	helper.c
 
-client:
-	cc $(CFLAGS) client.c $(OTHER_PATHS) -o client
-server:
-	cc $(CFLAGS) server.c $(OTHER_PATHS) -o server
+BONUS_SRC = server_bonus.c \
+			helper.c
 
-ft_printf_makefile:
-	$(MAKE) -C ft_printf
+BONUS_SRC_1 = client_bonus.c \
+			helper.c
 
-libft_makefile:
-	$(MAKE) -C libft
+OBJ = $(SRC:.c=.o)
+OBJ_1 = $(SRC_1:.c=.o)
+BONUS_OBJ = $(BONUS_SRC:.c=.o)
+BONUS_OBJ_1 = $(BONUS_SRC_1:.c=.o)
 
-bonus:ft_printf_makefile libft_makefile server_bonus client_bonus
+all: $(NAME)
 
-server_bonus:
-	gcc $(CFLAGS) server_bonus.c $(OTHER_PATHS) -o server_bonus
+$(NAME_1): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME_1)
 
-client_bonus:
-	gcc $(CFLAGS) client_bonus.c $(OTHER_PATHS) -o client_bonus
+$(NAME_2): $(OBJ_1)
+	$(CC) $(CFLAGS) $(OBJ_1) -o $(NAME_2)
+
+bonus: $(BONUS_NAME_1) $(BONUS_NAME_2)
+
+$(BONUS_NAME_1): $(BONUS_OBJ)
+	$(CC) $(CFLAGS) $(BONUS_OBJ) -o $(BONUS_NAME_1)
+
+$(BONUS_NAME_2): $(BONUS_OBJ_1)
+	$(CC) $(CFLAGS) $(BONUS_OBJ_1) -o $(BONUS_NAME_2)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(MAKE) -C ft_printf clean
-	$(MAKE) -C libft clean
-	rm -f server client
-	rm -f server_bonus client_bonus
+	rm -f $(OBJ) $(OBJ_1) $(BONUS_OBJ) $(BONUS_OBJ_1)
 
 fclean: clean
-	$(MAKE) -C ft_printf fclean
-	$(MAKE) -C libft fclean
+	rm -f $(NAME_1) $(NAME_2) $(BONUS_NAME_1) $(BONUS_NAME_2)
 
 re: fclean all
 
-.PHONY: all client server ft_printf_makefile libft_makefile bonus server_bonus clean fclean re
+.PHONY: clean fclean all re bonus

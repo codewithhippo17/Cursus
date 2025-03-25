@@ -1,32 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*   minitalk_bonus.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehamza <ehamza@student.42.fr>              +#+  +:+       +#+        */
+/*   By: zasoulai <zasoulai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/25 14:27:04 by ehamza            #+#    #+#             */
-/*   Updated: 2024/11/01 16:02:14 by ehamza           ###   ########.fr       */
+/*   Created: 2025/03/19 08:09:34 by zasoulai          #+#    #+#             */
+/*   Updated: 2025/03/22 10:27:25 by zasoulai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+#ifndef MINITALK_BONUS_H
+# define MINITALK_BONUS_H
 
-void	ft_putendl_fd(char *s, int fd)
-{
-	int	i;
+# include <signal.h>
+# include <unistd.h>
+# include <stdlib.h>
 
-	i = 0;
-	while (s[i])
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
-	write(fd, "\n", 1);
-}
+void	ft_putchar(char c);
+void	ft_putstr(char *str, int fd);
+void	ft_putnbr(int n);
+long	ft_atoi(char *str);
 
-// int main()
-// {
-// 	char h[] = "hippo dfud edfhf dfduhfd";
-// 	ft_putendl_fd(h, 1);
-// }
+#endif
